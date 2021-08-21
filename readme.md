@@ -69,14 +69,14 @@ Rule:
     ReqHeader []str  /* 自定义 Http 请求的 Header */
     ReqBody str  /* 自定义 POST 请求时的 Body */
 ```
-** 规则库示例1: **
+**规则库示例1:**  
 
 即在响应Body中检查是否存在字符`<flink-root></flink-root>`
 ```Golang
 {"Apahce Flink", "body", "", InStr{"(<flink-root></flink-root>)", "", ""}, ReqHttp{"", "", nil, ""}},
 ```  
 
-** 规则库示例2: ** 
+**规则库示例2:**  
 
 自定义请求访问`/myportal/control/main`,判断自定义请求的结果中是否存在指定的 header 字符和 body 字符  
 可以发现均支持正则表达式  
@@ -84,7 +84,7 @@ Rule:
 {"Apache OFBiz", "body|header", "or", InStr{"(Apache OFBiz|apache.ofbiz)", "(Set-Cookie: OFBiz.Visitor=(.*))", ""}, ReqHttp{"GET", "/myportal/control/main", nil, ""}},
 ```
 
-** header, body, ico 的逻辑关系可以随意组合,但不可重复组合：**   
+**header, body, ico 的逻辑关系可以随意组合,但不可重复组合:**  
 
 允许: `"body|header|ico", "or"` or `"body|header|ico", "or|and"` or `"body|ico", "and"`   
 不允许: `"body|body", "or"`  
