@@ -1,6 +1,9 @@
 ## 🌀 Dismap - Asset discovery and identification tool
 Dismap 定位是一个资产发现和识别工具；其特色功能在于快速识别 Web 指纹信息，定位资产类型。辅助红队快速定位目标资产信息，辅助蓝队发现疑似脆弱点  
-Dismap 拥有完善的指纹规则库，可轻松自定义新识别规则。借助于 golang 并发优势，即可实现快速资产探测与识别
+
+Dismap 拥有完善的指纹规则库，可轻松自定义新识别规则。借助于 golang 并发优势，即可实现快速资产探测与识别  
+
+对于规则库的简介位于 [RuleLab](https://github.com/zhzyker/dismap#-rulelab)
 
 ## 🏂 Run
 Dismap 对 Linux、MacOS、Windows 均提供了二进制可执行文件，前往 [Release](https://github.com/zhzyker/dismap/releases) 下载对应版本即可运行:
