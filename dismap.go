@@ -14,7 +14,7 @@ _  __  /__  /__  ___/_  __ `__ \  __ `/__  __ \
 */
 
 import (
-	"./lib"
+	"github.com/zhzyker/dismap/lib"
 	)
 
 func main() {
