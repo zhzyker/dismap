@@ -20,7 +20,10 @@ zhzyker@debian:~$ ./dismap -h
 
 # Windows
 C:\Users\zhzyker\Desktop> dismap.exe -h
-```
+```  
+>  ![dismap](https://github.com/zhzyker/zhzyker/blob/main/dd.png)
+
+
 
 ## 🎡 Optons
 ```Python
