@@ -1,7 +1,7 @@
 package lib
 
 import (
-	"../config"
+	"github.com/zhzyker/dismap/config"
 	"net"
 	"os"
 	"regexp"
