@@ -21,7 +21,8 @@ zhzyker@debian:~$ ./dismap -h
 # Windows
 C:\Users\zhzyker\Desktop> dismap.exe -h
 ```  
->  ![dismap](https://github.com/zhzyker/zhzyker/blob/main/dd.png)
+>  ![dismap1](https://github.com/zhzyker/zhzyker/blob/main/dd.png)
+>  ![dismap2](https://github.com/zhzyker/zhzyker/blob/main/dd2.png)
 
 
 
