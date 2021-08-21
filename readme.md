@@ -3,7 +3,7 @@ Dismap 定位是一个资产发现和识别工具；其特色功能在于快速�
 
 Dismap 拥有完善的指纹规则库，可轻松自定义新识别规则。借助于 golang 并发优势，即可实现快速资产探测与识别  
 
-对于规则库的简介位于 [RuleLab](https://github.com/zhzyker/dismap#-rulelab)
+扫描结果可直接丢给 [Vulmap](https://github.com/zhzyker/vulmap)(>=0.8) 进行漏洞扫描。对于规则库的简介位于 [RuleLab](https://github.com/zhzyker/dismap#-rulelab)
 
 ## 🏂 Run
 Dismap 对 Linux、MacOS、Windows 均提供了二进制可执行文件，前往 [Release](https://github.com/zhzyker/dismap/releases) 下载对应版本即可运行:
