@@ -3,8 +3,8 @@
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/dismap-0.1-ff69b4"></a>
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/LICENSE-GPL-important"></a>
 ![GitHub Repo stars](https://img.shields.io/github/stars/zhzyker/dismap?color=success)
-![GitHub forks](https://img.shields.io/github/forks/zhzyker/dismap)
-
+![GitHub forks](https://img.shields.io/github/forks/zhzyker/dismap)  
+[[English readme Click Me]](https://github.com/zhzyker/dismap/blob/main/readme-en.md)  
 Dismap 定位是一个资产发现和识别工具；其特色功能在于快速识别 Web 指纹信息，定位资产类型。辅助红队快速定位目标资产信息，辅助蓝队发现疑似脆弱点  
 
 Dismap 拥有完善的指纹规则库，可轻松自定义新识别规则。借助于 golang 并发优势，即可实现快速资产探测与识别  
