@@ -78,17 +78,17 @@ zhzyker@debian:~$ ./dismap -ip 192.168.1.1/24 -port 1-65535
 ```Golang
 Rule:
   Name: name /* 定义规则名称 */
-  Type: header, body, ico  /* 支持识别的类型, header 和 body 均为响应 Body 中, ico 为单独请求 favicon.ico 并计算 MD5*/
-  Mode: and, or /* 类型的判断逻辑关系 */
+  Type: header|body|ico  /* 支持识别的类型, header、body、ico 可任意逻辑组合, ico 为单独请求 favicon.ico 并计算 MD5*/
+  Mode: and|or /* 类型的判断逻辑关系 */
   Rule
     InBody: str  /* 需要指定响应 Body 中存在 str 则命中 */
     InHeader: str  /* 需要指定响应 Hedaer 中存在 str 则命中 */
     InIcoMd5: str_md5  /* favicon.ico 的 MD5 值 */
   Http:
-    ReqMethod GET, POST  /* 自定义请求方法,目前支持 GET 和 POST */
-    ReqPath str  /* 自定义请求 Web 路径 */
-    ReqHeader []str  /* 自定义 Http 请求的 Header */
-    ReqBody str  /* 自定义 POST 请求时的 Body */
+    ReqMethod: GET|POST  /* 自定义请求方法,目前支持 GET 和 POST */
+    ReqPath: str  /* 自定义请求 Web 路径 */
+    ReqHeader: []str  /* 自定义 Http 请求的 Header */
+    ReqBody: str  /* 自定义 POST 请求时的 Body */
 ```
 **规则库示例1:**  
 
