@@ -26,7 +26,7 @@ C:\Users\zhzyker\Desktop> dismap.exe -h
 
 
 
-## 🎡 Optons
+## 🎡 Options
 ```Python
 -file string
     Select a URL file for batch identification
