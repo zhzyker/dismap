@@ -69,7 +69,7 @@ zhzyker@debian:~$ ./dismap -ip 192.168.1.1/24 -port 1-65535
 * Twitter: https://twitter.com/zhzyker
 * WeChat: 扫码入群聊    
 <p>
-    <img alt="QR-code" src="https://github.com/zhzyker/zhzyker/blob/main/dismap_wechat_1.jpg" width="20%" height="20%" style="max-width:100%;">
+    <img alt="QR-code" src="https://github.com/zhzyker/zhzyker/blob/main/dismap_wechat_2.jpg" width="20%" height="20%" style="max-width:100%;">
 </p>
 
 ## 🌈 RuleLab
