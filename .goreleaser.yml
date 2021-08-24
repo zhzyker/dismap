@@ -1,0 +1,22 @@
+env:
+  - GO111MODULE=on
+before:
+  hooks:
+    - go mod tidy
+project_name: dismap
+builds:
+  - binary: dismap
+    main: dismap.go
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - 386
+archives:
+  - format: zip
+    replacements:
+      darwin: macOS
+checksum:
+  name_template: "{{ .ProjectName }}-checksums.txt"
