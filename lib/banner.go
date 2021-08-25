@@ -1,6 +1,10 @@
 package lib
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/zhzyker/dismap/pkg/logger"
+)
 
 func banner() {
 	banners := "_____________\n" +
@@ -12,12 +16,6 @@ func banner() {
 	infor := "  dismap version: 0.1 release\n" +
 		"  author: zhzyker && Nemophllist\n" +
 		"  from: https://github.com/zhzyker/dismap\n"
-	if sysarch == "windows" {
-		fmt.Println(banners)
-		fmt.Println(infor)
-	} else {
-		fmt.Println(LightPurple(banners))
-		fmt.Println(White(infor))
-	}
-
+	fmt.Println(logger.Purple(banners))
+	fmt.Println(logger.LightWhite(infor))
 }

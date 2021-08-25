@@ -17,3 +17,4 @@ vendor/
 .vscode/
 dump.rdb
 .DS_Store
+output.txt
