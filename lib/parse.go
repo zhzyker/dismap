@@ -2,7 +2,6 @@ package lib
 
 import (
 	"net"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -25,8 +24,7 @@ func ParseNetHosts(cidr string) ([]string, error) {
 	var ips []string
 	if len(regexp.MustCompile("0.0.0.0").FindAllStringIndex(cidr, -1)) == 1 {
 		logger.Error(logger.LightRed(cidr) + " is not a valid network segment")
-		logger.Error(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
-		os.Exit(0)
+		logger.Fatal(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
 	}
 	if len(regexp.MustCompile("-").FindAllStringIndex(cidr, -1)) == 1 {
 		grep := regexp.MustCompile("(.*)-(.*)")
@@ -35,8 +33,7 @@ func ParseNetHosts(cidr string) ([]string, error) {
 		iperr := net.ParseIP(cidr_ip)
 		if iperr == nil {
 			logger.Error(logger.LightRed(cidr) + " is not a valid network segment")
-			logger.Error(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
-			os.Exit(0)
+			logger.Fatal(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
 		}
 		enderr := net.ParseIP(cidr_end)
 		int_end, _ := strconv.Atoi(cidr_end)
@@ -74,8 +71,7 @@ func ParseNetHosts(cidr string) ([]string, error) {
 			return ips, nil
 		} else {
 			logger.Error(logger.LightRed(cidr) + " is not a valid network segment")
-			logger.Error(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
-			os.Exit(0)
+			logger.Fatal(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
 		}
 	} else if len(regexp.MustCompile("/").FindAllStringIndex(cidr, -1)) == 1 {
 		ip, ipnet, err := net.ParseCIDR(cidr)
@@ -99,8 +95,7 @@ func ParseNetHosts(cidr string) ([]string, error) {
 			}
 		}
 		if i == 0 {
-			logger.Error(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
-			os.Exit(0)
+			logger.Fatal(logger.LightRed("The hosts format is incorrect, there is no detectable hosts"))
 		}
 
 		return CustomPorts, nil
