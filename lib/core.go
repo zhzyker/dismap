@@ -68,7 +68,7 @@ func ManageFlag() {
 					wg.Wait()
 				}
 			}
-			ActualHosts = hosts
+			ActualHosts = SurviveHosts
 			wg.Wait()
 			logger.Info(
 				logger.LightGreen("There are total of ") +

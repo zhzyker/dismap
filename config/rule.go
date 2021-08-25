@@ -42,7 +42,7 @@ var RuleData = []RuleLab{
 	{"Apache Shiro", "header|ico", "and", InStr{"", "(rememberMe=|=deleteMe)", ""}, ReqHttp{"", "", nil, ""}},
 	{"Apache Solr", "body|ico", "or", InStr{"(SolrCore Initialization Failures|ng-app=\"solrAdminApp\")", "", "(69acfcb2659952bc37c54108d52fca70|ffc05799dee87a4f8901c458f7291d73)"}, ReqHttp{"", "", nil, ""}},
 	{"Apache Spark ", "body|ico", "or", InStr{"(src=\"/static/spark-logo(.*)\\.png\"|spark://)", "", "\""}, ReqHttp{"", "", nil, ""}},
-	{"Apache Struts2", "body|ico", "or", InStr{"(<a href=(.*)\\.action(.*)</a>|<form id=(.*)\\.action(.*)|<a href=(.*)\\.do(.*)</a>)", "", "((.*)\\.action|(.*)\\.do)"}, ReqHttp{"", "", nil, ""}},
+	{"Apache Struts2", "body", "or", InStr{"(<a href=(.*)\\.action(.*)</a>|<form id=(.*)\\.action(.*)|<a href=(.*)\\.do(.*)</a>|(.*)\\.action|(.*)\\.do)", "", ""}, ReqHttp{"", "", nil, ""}},
 	{"Apache Tomcat, Alfresco Enterprise Content Management System", "ico", "", InStr{"", "", "(d80e364c0d3138c7ecd75bf9896f2cad)"}, ReqHttp{"", "", nil, ""}},
 	{"Apache Tomcat", "body|ico", "or", InStr{"(<a href=\"/docs/setup.html\">Tomcat Setup</a>|If you're seeing this, you've successfully installed Tomcat. Congratulations!)", "", "4644f2d45601037b8423d45e13194c93"}, ReqHttp{"", "", nil, ""}},
 	{"Apahce Flink", "body", "", InStr{"(<title>Apache Flink Web Dashboard</title>|<flink-root></flink-root>)", "", ""}, ReqHttp{"", "", nil, ""}},
