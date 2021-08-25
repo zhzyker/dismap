@@ -15,10 +15,9 @@ _  __  /__  /__  ___/_  __ `__ \  __ `/__  __ \
 
 import (
 	"github.com/zhzyker/dismap/lib"
-	)
+)
 
 func main() {
 	// lib/core
 	lib.ManageFlag()
 }
-

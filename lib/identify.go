@@ -1,18 +1,20 @@
 package lib
 
 import (
-	"github.com/zhzyker/dismap/config"
 	"fmt"
 	"regexp"
+
+	"github.com/zhzyker/dismap/config"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
 type IdentifyResult struct {
-	Type string
+	Type     string
 	RespCode string
-	Result string
+	Result   string
 	ResultNc string
-	Url string
-	Title string
+	Url      string
+	Title    string
 }
 
 func Identify(url string, timeout int) []IdentifyResult {
@@ -509,14 +511,10 @@ func Identify(url string, timeout int) []IdentifyResult {
 	var identify_result string
 	var identify_result_nocolor string
 	for _, result := range identify_data {
-		if sysarch == "windows" {
-			identify_result += "["+result+"]"+" "
-		} else {
-			identify_result += "["+Yellow(result)+"]"+" "
-		}
+		identify_result += "[" + logger.Yellow(result) + "]" + " "
 	}
 	for _, result := range identify_data {
-		identify_result_nocolor += "["+result+"]"+" "
+		identify_result_nocolor += "[" + result + "]" + " "
 	}
 
 	Result := []IdentifyResult{
@@ -526,7 +524,7 @@ func Identify(url string, timeout int) []IdentifyResult {
 }
 
 func check_header(url, response_header string, rule_header string, name string, title string, RespCode string) bool {
-	grep := regexp.MustCompile("(?i)"+rule_header)
+	grep := regexp.MustCompile("(?i)" + rule_header)
 	if len(grep.FindStringSubmatch(response_header)) != 0 {
 		//fmt.Print("[header] ")
 		return true
@@ -536,7 +534,7 @@ func check_header(url, response_header string, rule_header string, name string, 
 }
 
 func check_body(url, response_body string, rule_body string, name string, title string, RespCode string) bool {
-	grep := regexp.MustCompile("(?i)"+rule_body)
+	grep := regexp.MustCompile("(?i)" + rule_body)
 	if len(grep.FindStringSubmatch(response_body)) != 0 {
 		//fmt.Print("[body] ")
 		return true
@@ -546,7 +544,7 @@ func check_body(url, response_body string, rule_body string, name string, title 
 }
 
 func check_favicon(Favicon, rule_favicon_md5 string) bool {
-	grep := regexp.MustCompile("(?i)"+rule_favicon_md5)
+	grep := regexp.MustCompile("(?i)" + rule_favicon_md5)
 	if len(grep.FindStringSubmatch(Favicon)) != 0 {
 		// fmt.Print("url")
 		return true
