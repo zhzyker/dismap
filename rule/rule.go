@@ -1,14 +1,14 @@
-package config
+package rule
 
 type ReqHttp struct {
 	ReqMethod string
-	ReqPath string
+	ReqPath   string
 	ReqHeader []string
-	ReqBody string
+	ReqBody   string
 }
 
 type InStr struct {
-	InBody string
+	InBody   string
 	InHeader string
 	InIcoMd5 string
 }
@@ -22,7 +22,9 @@ type RuleLab struct {
 }
 
 var RuleData = []RuleLab{
-	{"21publish Blog", "ico", "", InStr{"", "", "(e08333841cbe40d15b18f49045f26614)"}, ReqHttp{"", "", nil, ""}},
+	{"21publish Blog", "ico", "",
+		InStr{"", "", "(e08333841cbe40d15b18f49045f26614)"},
+		ReqHttp{"", "", nil, ""}},
 	{"3-byte invalid favicon", "ico", "", InStr{"", "", "(ecaa88f7fa0bf610a5a26cf545dcd3aa)"}, ReqHttp{"", "", nil, ""}},
 	{"About.com", "ico", "", InStr{"", "", "(71FA36961A58E12A525E7E0EA1F4A30D)"}, ReqHttp{"", "", nil, ""}},
 	{"AContent", "ico", "", InStr{"", "", "(28c34462a074c5311492759435549468)"}, ReqHttp{"", "", nil, ""}},
@@ -417,5 +419,4 @@ var RuleData = []RuleLab{
 	{"Zenoss Core", "ico", "", InStr{"", "", "(c126f7e761813946fea2e90ff7ddb838)"}, ReqHttp{"", "", nil, ""}},
 	{"znc", "ico", "", InStr{"", "", "(33b04fb9f2ec918f5f14b41527e77f6d)"}, ReqHttp{"", "", nil, ""}},
 	{"zoneminder", "ico", "", InStr{"", "", "(e07c0775523271d629035dc8921dffc7)"}, ReqHttp{"", "", nil, ""}},
-
 }

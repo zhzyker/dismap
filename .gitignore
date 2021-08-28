@@ -17,4 +17,6 @@ vendor/
 .vscode/
 dump.rdb
 .DS_Store
-output.txt
+output.*
+rule.json
+input.txt
