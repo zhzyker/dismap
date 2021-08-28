@@ -123,10 +123,10 @@ func (r *Runner) output(file *os.File) {
 				fmtfps := strings.Join(res.Fingerprints, "] [")
 				fmtfps = "[" + fmtfps + "]"
 				content = fmt.Sprintf("[+] [%d] %v %s [%s]\n", res.Sample.StatusCode, fmtfps, res.Sample.Url, res.Sample.Title)
-				logger.Successf("[%s] %v %s [%s]\n", logger.Purple(res.Sample.StatusCode), fmtfps, res.Sample.Url, logger.Blue(res.Sample.Title))
+				logger.Successf("[%s] %v %s [%s]\n", logger.Magenta(res.Sample.StatusCode), fmtfps, res.Sample.Url, logger.Blue(res.Sample.Title))
 			} else {
 				content = fmt.Sprintf("[-] [%d] %s [%s]\n", res.Sample.StatusCode, res.Sample.Url, res.Sample.Title)
-				logger.Failedf("[%s] %s [%s]\n", logger.Purple(res.Sample.StatusCode), res.Sample.Url, logger.Blue(res.Sample.Title))
+				logger.Failedf("[%s] %s [%s]\n", logger.Magenta(res.Sample.StatusCode), res.Sample.Url, logger.Blue(res.Sample.Title))
 			}
 			file.WriteString(content)
 		}

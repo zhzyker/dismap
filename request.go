@@ -38,10 +38,9 @@ type Sample struct {
 
 func RequestSample(url string, timeout time.Duration) (*Sample, error) {
 	client := &http.Client{
-		Timeout:   timeout,
-		Transport: &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}},
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
+		Timeout: timeout,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
 	}
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -97,7 +96,7 @@ func RequestSample(url string, timeout time.Duration) (*Sample, error) {
 		cookies[v.Name] = v.Value
 	}
 	return &Sample{
-		Url:        url,
+		Url:        resp.Request.URL.String(),
 		StatusCode: resp.StatusCode,
 		Header:     getHeaderString(resp),
 		Headers:    headers,

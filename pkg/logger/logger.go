@@ -14,6 +14,7 @@ var (
 	Yellow     = color.Yellow.Render
 	White      = color.White.Render
 	Blue       = color.Blue.Render
+	Magenta    = color.Magenta.Render
 	Purple     = color.Style{color.Magenta, color.OpBold}.Render
 	LightRed   = color.Style{color.Red, color.OpBold}.Render
 	LightGreen = color.Style{color.Green, color.OpBold}.Render
@@ -98,11 +99,11 @@ func Successln(format string, v ...interface{}) {
 }
 
 func Failedf(format string, v ...interface{}) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("-"), fmt.Sprintf(format, v...)))
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("-"), fmt.Sprintf(format, v...)))
 }
 
 func Failedln(v ...interface{}) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("-"), fmt.Sprintln(v...)))
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("-"), fmt.Sprintln(v...)))
 }
 
 func getTime() string {
