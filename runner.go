@@ -79,18 +79,22 @@ func (r *Runner) Scan() error {
 				goto LOOP_BREAK
 			}
 			r.limiter.Allow()
-			go func() {
+			go func(url string) {
 				defer r.limiter.Done()
-				sample, err := RequestSample(url, timeout)
+				req, err := MakeDefaultRequest(url)
 				if err != nil {
 					return
 				}
-				fingerprints := IdentifyRules(sample)
+				sample, err := RequestSample(req, timeout)
+				if err != nil {
+					return
+				}
+				fingerprints := IdentifyRules(sample, timeout)
 				r.outputCh <- ScanResult{
 					Sample:       sample,
 					Fingerprints: fingerprints,
 				}
-			}()
+			}(url)
 		}
 	LOOP_BREAK:
 		if r.targetCh == nil {
@@ -161,10 +165,17 @@ func (r *Runner) parseOutputFile() (*os.File, error) {
 func (r *Runner) mergeTargets() error {
 	lock := sync.Mutex{}
 
-	logger.Infoln("Start to detect host from", r.options.Ips)
-	ips, err := ParseIPRange(r.options)
-	if err != nil {
-		return err
+	var (
+		ips []string
+		err error
+	)
+
+	if r.options.Ips != "" {
+		logger.Infoln("Start to detect host from", r.options.Ips)
+		ips, err = ParseIPRange(r.options.Ips)
+		if err != nil {
+			return err
+		}
 	}
 
 	domains := make([]string, 0, 1)
@@ -244,7 +255,7 @@ func (r *Runner) mergeTargets() error {
 	go func() {
 		defer close(r.targetCh)
 		if len(hosts) > 0 {
-			if ports, err := ParsePorts(r.options); err == nil {
+			if ports, err := ParsePorts(r.options.Ports); err == nil {
 				for i := range hosts {
 					for j := range ports {
 						r.targetCh <- ParseUrl(hosts[i], ports[j])

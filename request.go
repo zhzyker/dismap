@@ -36,19 +36,12 @@ type Sample struct {
 	FaviconMd5 string
 }
 
-func RequestSample(url string, timeout time.Duration) (*Sample, error) {
+func RequestSample(req *http.Request, timeout time.Duration) (*Sample, error) {
 	client := &http.Client{
 		Timeout: timeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
-	}
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-	for key, value := range defaultHeader {
-		req.Header.Set(key, value)
 	}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -105,8 +98,42 @@ func RequestSample(url string, timeout time.Duration) (*Sample, error) {
 		Cookie:     strings.Join(cookie, "\n"),
 		Cookies:    cookies,
 		Server:     resp.Header.Get("Server"),
-		FaviconMd5: faviconMd5(url, client),
+		FaviconMd5: faviconMd5(resp.Request.URL.String(), client),
 	}, nil
+}
+
+func MakeDefaultRequest(url string) (*http.Request, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	for key, value := range defaultHeader {
+		req.Header.Set(key, value)
+	}
+	return req, nil
+}
+
+func MakeCustomRequest(Url, method, path string, headers []string, body string) (*http.Request, error) {
+	Url, err := joinPath(Url, path)
+	if err != nil {
+		return nil, err
+	}
+	var bodyr io.Reader
+	if body != "" {
+		bodyr = strings.NewReader(body)
+	}
+	req, err := http.NewRequest(method, Url, bodyr)
+	if err != nil {
+		return nil, err
+	}
+	for _, header := range headers {
+		kv := strings.SplitN(header, ":", 2)
+		if len(kv) != 2 {
+			continue
+		}
+		req.Header.Set(strings.TrimSpace(kv[0]), strings.TrimSpace(kv[1]))
+	}
+	return req, nil
 }
 
 func faviconMd5(URL string, client *http.Client) string {

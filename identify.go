@@ -3,25 +3,31 @@ package dismap
 import (
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/zhzyker/dismap/pkg/slice"
 	"github.com/zhzyker/dismap/rule"
 )
 
-func IdentifyRules(sample *Sample) []string {
+func IdentifyRules(sample *Sample, timeout time.Duration) []string {
 	resutls := make([]string, 0)
 	for _, rule := range rule.RuleData {
-		if identifyRule(rule, sample) {
+		if identifyRule(rule, sample, timeout) {
 			resutls = append(resutls, rule.Name)
 		}
 	}
 	return resutls
 }
 
-func identifyRule(rule rule.RuleLab, sample *Sample) bool {
-	// TODO
-	// custom make sample
+func identifyRule(rule rule.RuleLab, sample *Sample, timeout time.Duration) bool {
+	// make custom sample
 	if rule.Http.ReqMethod != "" {
+		req, err := MakeCustomRequest(sample.Url, rule.Http.ReqMethod, rule.Http.ReqPath, rule.Http.ReqHeader, rule.Http.ReqBody)
+		if err == nil {
+			if s, err := RequestSample(req, timeout); err == nil {
+				sample = s
+			}
+		}
 	}
 	types := slice.RemoveDuplicationSort(strings.Split(rule.Type, "|"))
 	operators := make([]string, 0)

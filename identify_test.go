@@ -13,11 +13,15 @@ func Test_checkInContent(t *testing.T) {
 }
 
 func Test_IdentifyRules(t *testing.T) {
-	s, err := RequestSample("https://www.baidu.com", 5*time.Second)
+	req, err := MakeDefaultRequest("https://www.baidu.com")
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(IdentifyRules(s))
+	s, err := RequestSample(req, 5*time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(IdentifyRules(s, time.Second))
 }
 
 func Test_identifyRules(t *testing.T) {
@@ -35,7 +39,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "",
 			InIcoMd5: "",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -46,7 +50,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>test</h>",
 			InIcoMd5: "",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -57,7 +61,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>test</h>",
 			InIcoMd5: "",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -68,7 +72,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>test</h>",
 			InIcoMd5: "",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -79,7 +83,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>test</h>",
 			InIcoMd5: "md5123123",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -90,7 +94,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "notfound",
 			InIcoMd5: "md5123123",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -101,7 +105,7 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>(xxxxx)</h>",
 			InIcoMd5: "(xxxxxx)",
 		},
-	}, s))
+	}, s, time.Second))
 
 	t.Log(identifyRule(rule.RuleLab{
 		Name: "test",
@@ -112,5 +116,5 @@ func Test_identifyRules(t *testing.T) {
 			InBody:   "<h1>(xxxxx)</h>",
 			InIcoMd5: "(xxxxxx)",
 		},
-	}, s))
+	}, s, time.Second))
 }
