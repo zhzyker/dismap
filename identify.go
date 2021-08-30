@@ -34,8 +34,16 @@ func identifyRule(rule rule.RuleLab, sample *Sample, timeout time.Duration) bool
 	if rule.Mode != "" {
 		operators = strings.Split(rule.Mode, "|")
 	}
-	if len(types)-len(operators) != 1 {
-		return false
+
+	diff := len(types) - len(operators)
+	if diff != 1 {
+		if len(operators) != 1 {
+			return false
+		}
+		// 支持操作符仅为一个时
+		for i := 0; i < diff; i++ {
+			operators = append(operators, operators[0])
+		}
 	}
 
 	var res bool

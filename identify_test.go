@@ -9,7 +9,6 @@ import (
 
 func Test_checkInContent(t *testing.T) {
 	t.Log(checkInContent("(7dbe9acc2ab6e64d59fa67637b1239df|asdasdasd)", "7dbe9acc2ab6e64d59fa67637b1239df"))
-
 }
 
 func Test_IdentifyRules(t *testing.T) {
@@ -117,4 +116,18 @@ func Test_identifyRules(t *testing.T) {
 			InIcoMd5: "(xxxxxx)",
 		},
 	}, s, time.Second))
+}
+
+func Test_identifyRule(t *testing.T) {
+	req, err := MakeDefaultRequest("http://xxxxx")
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := RequestSample(req, 5*time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("%#v", s)
+	r := rule.RuleLab{"BT.cn", "body|header|ico", "or", rule.InStr{"(请使用正确的入口登录面板|rm -f /www/server/panel/data/admin_path.pl|宝塔(.*)面板)", "(Set-Cookie: BT_COLL=)", "(9637ebd168435de51fea8193d2d89e39)"}, rule.ReqHttp{"", "", nil, ""}}
+	t.Log(identifyRule(r, s, 5*time.Second))
 }
