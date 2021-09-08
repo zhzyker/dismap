@@ -27,3 +27,11 @@ func Test_CreateFile(t *testing.T) {
 	defer file.Close()
 	file.WriteString("testing \n")
 }
+
+func Test_isURL(t *testing.T) {
+	t.Log(isURL("httpzznq.test.test"))
+	t.Log(isURL("httpszznq.test.test"))
+	t.Log(isURL("http:/zznq.test.test"))
+	t.Log(isURL("http://zznq.test.test"))
+	t.Log(isURL("https://zznq.test.test"))
+}

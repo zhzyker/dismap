@@ -193,7 +193,7 @@ func (r *Runner) mergeTargets() error {
 			s := bufio.NewScanner(f)
 			for s.Scan() {
 				t := strings.TrimSpace(s.Text())
-				if strings.HasPrefix(t, "http") && isURL(t) {
+				if isURL(t) {
 					urls = append(urls, t)
 					continue
 				}
@@ -288,8 +288,11 @@ func pingHost(host string, timeout int) bool {
 }
 
 func isURL(r string) bool {
-	_, err := url.Parse(r)
-	return err == nil
+	if httpPrefixRex.MatchString(r) {
+		_, err := url.Parse(r)
+		return err == nil
+	}
+	return false
 }
 
 func isIP(ip string) bool {
@@ -297,7 +300,8 @@ func isIP(ip string) bool {
 }
 
 var (
-	domainRex = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$`)
+	domainRex     = regexp.MustCompile(`^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$`)
+	httpPrefixRex = regexp.MustCompile(`^https?://`)
 )
 
 func isDomainName(d string) bool {
