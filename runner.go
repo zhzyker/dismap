@@ -193,7 +193,7 @@ func (r *Runner) mergeTargets() error {
 			s := bufio.NewScanner(f)
 			for s.Scan() {
 				t := strings.TrimSpace(s.Text())
-				if strings.HasPrefix(t, "http") && isURL(r.options.Url) {
+				if strings.HasPrefix(t, "http") && isURL(t) {
 					urls = append(urls, t)
 					continue
 				}
