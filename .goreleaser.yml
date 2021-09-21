@@ -6,7 +6,7 @@ before:
 project_name: dismap
 builds:
   - binary: dismap
-    main: dismap.go
+    main: cmd/dismap.go
     goos:
       - linux
       - windows

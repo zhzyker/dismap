@@ -14,6 +14,7 @@ var (
 	Yellow     = color.Yellow.Render
 	White      = color.White.Render
 	Blue       = color.Blue.Render
+	Magenta    = color.Magenta.Render
 	Purple     = color.Style{color.Magenta, color.OpBold}.Render
 	LightRed   = color.Style{color.Red, color.OpBold}.Render
 	LightGreen = color.Style{color.Green, color.OpBold}.Render
@@ -29,48 +30,80 @@ func SetLevel(l Level) {
 	defaultLevel = l
 }
 
-func log(l Level, detail string) {
+func log(l Level, v string) {
 	if l > defaultLevel {
 		return
 	}
 
-	fmt.Println(detail)
+	fmt.Print(v)
 
 	if l == LevelFatal {
 		os.Exit(1)
 	}
 }
 
-func Fatal(detail string) {
-	log(LevelFatal, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("FATAL"), detail))
+func Fatalf(format string, v ...interface{}) {
+	log(LevelFatal, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("FATAL"), fmt.Sprintf(format, v...)))
 }
 
-func Error(detail string) {
-	log(LevelError, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("ERROR"), detail))
+func Fatalln(v ...interface{}) {
+	log(LevelFatal, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("FATAL"), fmt.Sprintln(v...)))
 }
 
-func Info(detail string) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("INFO"), detail))
+func Errorf(format string, v ...interface{}) {
+	log(LevelError, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("ERROR"), fmt.Sprintf(format, v...)))
 }
 
-func Warn(detail string) {
-	log(LevelWarning, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), Yellow("WARNING"), detail))
+func Errorln(v ...interface{}) {
+	log(LevelError, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("ERROR"), fmt.Sprintln(v...)))
 }
 
-func Debug(detail string) {
-	log(LevelDebug, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("DEBUG"), detail))
+func Infof(format string, v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("INFO"), fmt.Sprintf(format, v...)))
 }
 
-func Verbose(detail string) {
-	log(LevelVerbose, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("VERBOSE"), detail))
+func Infoln(v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("INFO"), fmt.Sprintln(v...)))
 }
 
-func Success(detail string) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("+"), detail))
+func Warnf(format string, v ...interface{}) {
+	log(LevelWarning, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), Yellow("WARNING"), fmt.Sprintf(format, v...)))
 }
 
-func Failed(detail string) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("-"), detail))
+func Warnln(v ...interface{}) {
+	log(LevelWarning, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), Yellow("WARNING"), fmt.Sprintln(v...)))
+}
+
+func Debugf(format string, v ...interface{}) {
+	log(LevelDebug, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("DEBUG"), fmt.Sprintf(format, v...)))
+}
+
+func Debugln(v ...interface{}) {
+	log(LevelDebug, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("DEBUG"), fmt.Sprintln(v...)))
+}
+
+func Verbosef(format string, v ...interface{}) {
+	log(LevelVerbose, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("VERBOSE"), fmt.Sprintf(format, v...)))
+}
+
+func Verboseln(format string, v ...interface{}) {
+	log(LevelVerbose, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightCyan("VERBOSE"), fmt.Sprintln(v...)))
+}
+
+func Successf(format string, v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("+"), fmt.Sprintf(format, v...)))
+}
+
+func Successln(format string, v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("+"), fmt.Sprintln(v...)))
+}
+
+func Failedf(format string, v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("-"), fmt.Sprintf(format, v...)))
+}
+
+func Failedln(v ...interface{}) {
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("-"), fmt.Sprintln(v...)))
 }
 
 func getTime() string {
