@@ -11,7 +11,7 @@ func all() {
 	Success("1234")
 	Failed("1234")
 
-	Warn("123")
+	Warning("123")
 	Debug("123")
 	Verbose("1234")
 }

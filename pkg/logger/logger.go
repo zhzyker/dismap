@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	Red		   = color.Red.Render
 	Cyan       = color.Cyan.Render
 	Yellow     = color.Yellow.Render
 	White      = color.White.Render
@@ -19,10 +20,12 @@ var (
 	LightGreen = color.Style{color.Green, color.OpBold}.Render
 	LightWhite = color.Style{color.White, color.OpBold}.Render
 	LightCyan  = color.Style{color.Cyan, color.OpBold}.Render
+	LightYellow  = color.Style{color.Yellow, color.OpBold}.Render
+	LightBlue  = color.Style{color.Blue, color.OpBold}.Render
 )
 
 var (
-	defaultLevel = LevelInfo
+	defaultLevel = LevelWarning
 )
 
 func SetLevel(l Level) {
@@ -53,8 +56,8 @@ func Info(detail string) {
 	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("INFO"), detail))
 }
 
-func Warn(detail string) {
-	log(LevelWarning, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), Yellow("WARNING"), detail))
+func Warning(detail string) {
+	log(LevelWarning, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightYellow("WARNING"), detail))
 }
 
 func Debug(detail string) {
@@ -70,7 +73,7 @@ func Success(detail string) {
 }
 
 func Failed(detail string) {
-	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightGreen("-"), detail))
+	log(LevelInfo, fmt.Sprintf("[%s] [%s] %s", Cyan(getTime()), LightRed("-"), detail))
 }
 
 func getTime() string {

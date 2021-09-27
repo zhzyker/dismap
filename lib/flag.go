@@ -3,7 +3,7 @@ package lib
 import "flag"
 
 var NetWork string
-var Url string
+var InUrl string
 var TimeOut int
 var Thread int
 var Port string
@@ -12,7 +12,7 @@ var Files string
 var NoIcmp bool
 
 func init() {
-	flag.StringVar(&Url, "url", "", "Specify a target URL [e.g. -url https://example.com]")
+	flag.StringVar(&InUrl, "url", "", "Specify a target URL [e.g. -url https://example.com]")
 	flag.StringVar(&NetWork,"ip", "", "Network segment [e.g. -ip 192.168.1.0/24 or -ip 192.168.1.1-10]")
 	flag.IntVar(&TimeOut, "timeout", 5, "Response timeout time, the default is 5 seconds")
 	flag.IntVar(&Thread, "thread", 508, "Number of concurrent threads, (adapted to two network segments 2x254)")

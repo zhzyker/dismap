@@ -1,11 +1,11 @@
 package lib
 
 import (
-	"github.com/zhzyker/dismap/config"
 	"bytes"
 	"crypto/md5"
 	"crypto/tls"
 	"fmt"
+	"github.com/zhzyker/dismap/config"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"io/ioutil"
 	"net/http"
@@ -216,7 +216,61 @@ func DefaultRequests(Url string, timeout int) []RespLab {
 		}
 		return RespData
 	}
-
+	if len(regexp.MustCompile("400").FindAllStringIndex(response_status_code, -1)) == 1 {
+		client := &http.Client{
+			Timeout: time.Duration(timeout) * time.Second,
+			Transport: &http.Transport {
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		grep := regexp.MustCompile(`(http://)`)
+		https_url := grep.ReplaceAllString(Url, "https://")
+		req, err := http.NewRequest("GET", https_url, nil)
+		if err != nil {
+			return nil
+		}
+		for key, value :=  range config.DefaultHeader {
+			req.Header.Set(key, value)
+		}
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil
+		}
+		defer resp.Body.Close()
+		// Solve the problem of two 30x jumps
+		// get response body for string
+		body_bytes, err := ioutil.ReadAll(resp.Body)
+		response_body = string(body_bytes)
+		// Solve the problem of garbled body codes with unmatched numbers
+		if !utf8.Valid(body_bytes) {
+			data, _ := simplifiedchinese.GBK.NewDecoder().Bytes(body_bytes)
+			response_body = string(data)
+		}
+		// Get Response title
+		grep_title := regexp.MustCompile("<title>(.*)</title>")
+		if len(grep_title.FindStringSubmatch(response_body)) != 0 {
+			resp_title = grep_title.FindStringSubmatch(response_body)[1]
+		} else {
+			resp_title = "None"
+		}
+		// get response header for string
+		for name, values := range resp.Header {
+			for _, value := range values {
+				res = append(res, fmt.Sprintf("%s: %s", name, value))
+			}
+		}
+		for _, re := range res {
+			response_header += re + "\n"
+		}
+		faviconmd5 := FaviconMd5(Url, timeout, "")
+		RespData := []RespLab{
+			{https_url, response_body, response_header, response_status_code, resp_title, faviconmd5},
+		}
+		return RespData
+	}
 	// get response body for string
 	body_bytes, err := ioutil.ReadAll(resp.Body)
 	response_body = string(body_bytes)
