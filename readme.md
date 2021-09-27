@@ -1,6 +1,6 @@
 ## 🌀 Dismap - Asset discovery and identification tool
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/golang-1.6+-9cf"></a>
-<a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/dismap-0.1-ff69b4"></a>
+<a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/dismap-0.2-ff69b4"></a>
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/LICENSE-GPL-important"></a>
 ![GitHub Repo stars](https://img.shields.io/github/stars/zhzyker/dismap?color=success)
 ![GitHub forks](https://img.shields.io/github/forks/zhzyker/dismap)
