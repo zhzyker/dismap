@@ -1,9 +1,10 @@
 ## 🌀 Dismap - Asset discovery and identification tool
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/golang-1.6+-9cf"></a>
-<a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/dismap-0.2-ff69b4"></a>
+<a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/dismap-0.3-ff69b4"></a>
 <a href="https://github.com/zhzyker/dismap"><img alt="Release" src="https://img.shields.io/badge/LICENSE-GPL-important"></a>
 ![GitHub Repo stars](https://img.shields.io/github/stars/zhzyker/dismap?color=success)
-![GitHub forks](https://img.shields.io/github/forks/zhzyker/dismap)  
+![GitHub forks](https://img.shields.io/github/forks/zhzyker/dismap)
+![GitHub all release](https://img.shields.io/github/downloads/zhzyker/dismap/total?color=blueviolet)  
 [[中文 Readme]](https://github.com/zhzyker/dismap/blob/main/readme-zh.md)  
 Dismap positioning is an asset **discovery** and **identification** tool. It can quickly identify protocols and fingerprint information such as web/tcp/udp, locate asset types, and is suitable for internal and external networks. It assists red team personnel to quickly locate potential risk asset information, and assist blue team personnel to detect Suspected Fragile Assets
 
