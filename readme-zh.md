@@ -60,9 +60,9 @@ zhzyker@debian:~$ ./dismap -i 192.168.1.1/24 -p 1-65535
 ## ⛪ Discussion
 * Dismap Bug 反馈或新功能建议[点我](https://github.com/zhzyker/dismap/issues)
 * Twitter: https://twitter.com/zhzyker
-* WeChat: 扫码入群聊
+* WeChat: 扫码滴滴我入群聊
 <p>
-    <img alt="QR-code" src="https://github.com/zhzyker/zhzyker/blob/main/dismap_wechat_6.jpg" width="20%" height="20%" style="max-width:100%;">
+    <img alt="QR-code" src="https://github.com/zhzyker/zhzyker/blob/main/my-wechat.jpg" width="20%" height="20%" style="max-width:100%;">
 </p>
 
 ## 🌈 RuleLab
