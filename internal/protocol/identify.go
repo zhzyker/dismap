@@ -151,7 +151,7 @@ func JudgeTcp(result map[string]interface{}, Args map[string]interface{}) bool {
 	status := result["status"].(string)
 	if status == "open" && runAll {
 		printFailed("TCP/unknown", result)
-		}
+	}
 	return false
 }
 
@@ -183,7 +183,6 @@ func JudgeTls(result map[string]interface{}, Args map[string]interface{}) bool {
 	status := result["status"].(string)
 	if status == "open" && runAll {
 		printFailed("TLS/unknown", result)
-		//logger.Failed(fmt.Sprintf("[%s] %s [%s]", logger.Cyan("TLS/unknown"), parse.SchemeParse(result), logger.Blue(banner)))
 	}
 	return false
 }
@@ -254,7 +253,7 @@ func printFailed(p string, result map[string]interface{}) {
 			logger.Cyan(p),
 			parse.SchemeParse(result),
 			logger.Blue(result["banner.string"].(string))),
-			)
+		)
 		result["identify.string"] = logger.Clean(result["identify.string"].(string))
 		result["note"] = logger.Clean(result["note"].(string))
 	}

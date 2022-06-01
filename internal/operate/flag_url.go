@@ -13,20 +13,15 @@ func FlagUrl(op *os.File, uri string, Args map[string]interface{}) {
 	if logger.DebugError(err) {
 		return
 	}
-	if Args["FlagMode"] == Args["FlagType"] {
-		if scheme == "https" {
-			Args["FlagType"] = "tls"
-			Args["FlagMode"] = scheme
-		} else {
-			Args["FlagType"] = "tcp"
-			Args["FlagMode"] = scheme
-		}
+	var res map[string]interface{}
+	//Args["FlagMode"] = scheme
+	switch scheme {
+	case "http":
+		res = protocol.DiscoverTcp(host, port, Args)
+	case "https":
+		res = protocol.DiscoverTls(host, port, Args)
 	}
-	res := protocol.Discover(host, port, Args)
-	if Args["FlagMode"] == Args["FlagType"] {
-		Args["FlagType"] = ""
-		Args["FlagMode"] = ""
-	}
+	//Args["FlagMode"] = ""
 	parse.VerboseParse(res)
 	output.Write(res, op)
 }
