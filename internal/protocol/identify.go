@@ -147,6 +147,12 @@ func JudgeTcp(result map[string]interface{}, Args map[string]interface{}) bool {
 			return true
 		}
 	}
+	if protocol == "giop" || runAll {
+		if judge.TcpGIOP(result, Args) {
+			printSuccess("TCP/GIOP", result)
+			return true
+		}
+	}
 
 	status := result["status"].(string)
 	if status == "open" && runAll {
