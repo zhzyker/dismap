@@ -1,8 +1,10 @@
 package judge
 
 import (
+	"encoding/hex"
 	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+	"strings"
 )
 
 func TcpTelnet(result map[string]interface{}) bool {
@@ -13,6 +15,9 @@ func TcpTelnet(result map[string]interface{}) bool {
 		return false
 	}
 	if ok {
+		result["protocol"] = "telnet"
+		return true
+	} else if strings.Contains(hex.EncodeToString(buff[0:2]), "fffb") {
 		result["protocol"] = "telnet"
 		return true
 	}
