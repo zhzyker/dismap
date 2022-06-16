@@ -32,15 +32,41 @@ func FlagNetwork(op *os.File, wg *sync.WaitGroup, lock *sync.Mutex, address stri
 	intIde := 0
 	for _, host := range actualHosts {
 		for _, port := range ports {
-			wg.Add(1)
+			wg.Add(3)
 			intSyncThread++
 			go func(host string, port int, Args map[string]interface{}) {
-				res := protocol.Discover(host, port, Args)
-				if res["status"].(string) == "open" {
+				resTls := protocol.DiscoverTls(host, port, Args)
+				if resTls["status"].(string) == "open" {
 					intAll++
-					parse.VerboseParse(res)
-					output.Write(res, op)
-					if strings.Contains(res["uri"].(string), "://") {
+					parse.VerboseParse(resTls)
+					output.Write(resTls, op)
+					if strings.Contains(resTls["uri"].(string), "://") {
+						intIde++
+					}
+				}
+				wg.Done()
+			}(host, port, Args)
+
+			go func(host string, port int, Args map[string]interface{}) {
+				resTcp := protocol.DiscoverTcp(host, port, Args)
+				if resTcp["status"].(string) == "open" {
+					intAll++
+					parse.VerboseParse(resTcp)
+					output.Write(resTcp, op)
+					if strings.Contains(resTcp["uri"].(string), "://") {
+						intIde++
+					}
+				}
+				wg.Done()
+			}(host, port, Args)
+
+			go func(host string, port int, Args map[string]interface{}) {
+				resUdp := protocol.DiscoverUdp(host, port, Args)
+				if resUdp["status"].(string) == "open" {
+					intAll++
+					parse.VerboseParse(resUdp)
+					output.Write(resUdp, op)
+					if strings.Contains(resUdp["uri"].(string), "://") {
 						intIde++
 					}
 				}
