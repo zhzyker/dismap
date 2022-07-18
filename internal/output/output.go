@@ -28,13 +28,16 @@ func Write(result map[string]interface{}, output *os.File) {
 		byteR, _ := json.Marshal(result)
 		writeContent(output, string(byteR))
 	} else {
-		content := fmt.Sprintf("%s, %s, %s, %s, %s, %s",
+		content := fmt.Sprintf("%s, %s, %d, %s, %s, %s, %s, %s",
 			logger.GetTime(),
+			result["host"],
+			result["port"],
 			result["type"],
 			result["protocol"],
 			logger.Clean(result["identify.string"].(string)),
 			result["uri"],
 			result["banner.string"])
+		writeContent(output, content)
 		writeContent(output, content)
 	}
 }
