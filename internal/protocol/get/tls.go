@@ -2,18 +2,14 @@ package get
 
 import (
 	"bytes"
+	"time"
+
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"time"
 )
 
 func TlsProtocol(host string, port int, timeout int) ([]byte, error) {
 	conn, err := proxy.ConnProxyTls(host, port, timeout)
-	if logger.DebugError(err) {
-		return nil, err
-	}
-	msg := "GET /test HTTP/1.1\r\n\r\n"
-	_, err = conn.Write([]byte(msg))
 	if logger.DebugError(err) {
 		return nil, err
 	}
@@ -28,11 +24,12 @@ func TlsProtocol(host string, port int, timeout int) ([]byte, error) {
 		return reply, nil
 
 	}
-	conn, err = proxy.ConnProxyTcp(host, port, timeout)
+
+	conn, err = proxy.ConnProxyTls(host, port, timeout)
 	if logger.DebugError(err) {
 		return nil, err
 	}
-	msg = "GET /test HTTP/1.1\r\n\r\n"
+	msg := "GET /test HTTP/1.1\r\n\r\n"
 	_, err = conn.Write([]byte(msg))
 	if logger.DebugError(err) {
 		return nil, err
