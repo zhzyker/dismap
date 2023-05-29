@@ -29,10 +29,15 @@ var checkCmd = &cobra.Command{
 			}
 			// check keyword
 			for _, item := range types {
-				for _, item2 := range modes {
-					if !(item == "body" || item == "header" || item == "ico" || item2 == "" || item2 == "and" || item2 == "or") {
-						logger.Error(fmt.Sprintf("Abnormal keyword name: %-30v type: %-20v mode: %v", rule.Name, rule.Type, rule.Mode))
-					}
+				if !(item == "body" || item == "header" || item == "ico") {
+					logger.Error(fmt.Sprintf("Abnormal keyword, name: %-30v type: %-20v mode: %v", rule.Name, rule.Type, rule.Mode))
+					break
+				}
+			}
+			for _, item2 := range modes {
+				if !(item2 == "" || item2 == "and" || item2 == "or") {
+					logger.Error(fmt.Sprintf("Abnormal mode, name: %-30v type: %-20v mode: %v", rule.Name, rule.Type, rule.Mode))
+					break
 				}
 			}
 		}
