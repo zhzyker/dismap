@@ -419,7 +419,7 @@ func identify(url string, timeout int) (*model.HttpResult, []model.HintFinger, e
 		}
 		// If the http request fails, then RespBody and RespHeader are both null
 		// At this time, it is considered that the url does not exist
-		if defaultResp.Body == defaultResp.Header {
+		if checkResp.Body == checkResp.Header {
 			continue
 		}
 		// 开始判断
