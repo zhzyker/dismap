@@ -22,7 +22,7 @@ type RuleLab struct {
 	Http ReqHttp
 }
 
-var RuleData = []RuleLab{
+var RuleData = []*RuleLab{
 	{1, "EnterCRM", "body", "", InStr{"(Ent.base.js)", "", ""}, ReqHttp{"", "", nil, ""}},
 	{1, "MeterSphere", "body", "", InStr{"(<title>MeterSphere</title>)", "", ""}, ReqHttp{"", "", nil, ""}},
 	{3, "Apache Druid", "body", "", InStr{"(<title>Apache Druid</title>|content=\"Apache Druid console\")", "", ""}, ReqHttp{"", "", nil, ""}},

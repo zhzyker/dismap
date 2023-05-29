@@ -2,43 +2,44 @@ package judge
 
 import (
 	"fmt"
-	"github.com/zhzyker/dismap/pkg/logger"
 	"net/url"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TlsHTTPS(result map[string]interface{}, Args map[string]interface{}) bool {
-	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+func TlsHTTPS(result *model.Result) bool {
+	var buff = result.BannerB
 	ok, err := regexp.Match(`^HTTP/\d.\d \d*`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "https"
-		httpResult, httpErr := httpIdentifyResult(result, Args)
+		result.Protocol = "https"
+		httpResult, fpHints, httpErr := httpIdentifyResult(result)
 		if logger.DebugError(httpErr) {
-			result["banner.string"] = "None"
+			result.Identify = fpHints
+			result.Banner = "None"
 			return true
 		}
-		result["banner.string"] = httpResult["http.title"].(string)
-		u, err := url.Parse(httpResult["http.target"].(string))
+		result.Identify = fpHints
+		result.Banner = httpResult.Title
+		u, err := url.Parse(httpResult.Url)
 		if err != nil {
-			result["path"] = ""
+			result.Path = ""
 		} else {
-			result["path"] = u.Path
+			result.Path = u.Path
 		}
-		r := httpResult["http.result"].(string)
-		c := fmt.Sprintf("[%s]", logger.Purple(httpResult["http.code"].(string)))
+		r := httpResult.Result
+		c := fmt.Sprintf("[%s]", logger.Purple(httpResult.StatusCode))
+		result.IdentifyBool = true
+		result.Note = httpResult.Url
 		if len(r) != 0 {
-			result["identify.bool"] = true
-			result["identify.string"] = fmt.Sprintf("%s %s", c, r)
-			result["note"] = httpResult["http.target"].(string)
+			result.IdentifyStr = fmt.Sprintf("%s %s", c, r)
 			return true
 		} else {
-			result["identify.bool"] = true
-			result["identify.string"] = c
-			result["note"] = httpResult["http.target"].(string)
+			result.IdentifyStr = c
 			return true
 		}
 	}

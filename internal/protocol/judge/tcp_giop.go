@@ -2,25 +2,23 @@ package judge
 
 import (
 	"encoding/hex"
+	"strings"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/proxy"
-	"github.com/zhzyker/dismap/pkg/logger"
-	"strings"
 )
 
-func TcpGIOP(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
-
-	conn, err := proxy.ConnProxyTcp(host, port, timeout)
-	if logger.DebugError(err) {
+func TcpGIOP(result *model.Result) bool {
+	conn, err := proxy.ConnProxyTcp(result.Host, result.Port, flag.Timeout)
+	if err != nil {
 		return false
 	}
 
 	msg := "\x47\x49\x4f\x50\x01\x02\x00\x03\x00\x00\x00\x17\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x0b\x4e\x61\x6d\x65\x53\x65\x72\x76\x69\x63\x65"
 	_, err = conn.Write([]byte(msg))
-	if logger.DebugError(err) {
+	if err != nil {
 		return false
 	}
 
@@ -30,12 +28,12 @@ func TcpGIOP(result map[string]interface{}, Args map[string]interface{}) bool {
 		_ = conn.Close()
 	}
 
-	if strings.Contains(hex.EncodeToString(reply[0:4]), "47494f50") == false {
+	if !strings.Contains(hex.EncodeToString(reply[0:4]), "47494f50") {
 		return false
 	}
 
-	result["protocol"] = "giop"
-	result["banner.string"] = parse.ByteToStringParse2(reply[0:4])
-	result["banner.byte"] = reply
+	result.Protocol = "giop"
+	result.Banner = parse.ByteToStringParse2(reply[0:4])
+	result.BannerB = reply
 	return true
 }

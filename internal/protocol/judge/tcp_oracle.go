@@ -4,17 +4,20 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"regexp"
+	"strconv"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"regexp"
-	"strconv"
 )
 
-func TcpOracle(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
+func TcpOracle(result *model.Result) bool {
+	timeout := flag.Timeout
+	host := result.Host
+	port := result.Port
 
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
@@ -33,9 +36,9 @@ func TcpOracle(result map[string]interface{}, Args map[string]interface{}) bool 
 		_ = conn.Close()
 	}
 
-	ok, err := regexp.Match(`\(DESCRIPTION=`, result["banner.byte"].([]byte))
+	ok, err := regexp.Match(`\(DESCRIPTION=`, result.BannerB)
 	if ok {
-		result["protocol"] = "oracle"
+		result.Protocol = "oracle"
 	} else {
 		var buffer [256]byte
 		if bytes.Equal(reply[:], buffer[:]) {
@@ -43,7 +46,7 @@ func TcpOracle(result map[string]interface{}, Args map[string]interface{}) bool 
 		} else if hex.EncodeToString(reply[0:8]) != "0065000004000000" {
 			return false
 		} else {
-			result["protocol"] = "oracle"
+			result.Protocol = "oracle"
 		}
 	}
 	var vsnnum string
@@ -52,7 +55,7 @@ func TcpOracle(result map[string]interface{}, Args map[string]interface{}) bool 
 	vsnnum = grep.FindStringSubmatch(banStr)[1]
 	v, err := strconv.ParseInt(vsnnum, 10, 64)
 	if logger.DebugError(err) {
-		result["identify.bool"] = false
+		result.IdentifyBool = false
 	}
 
 	hexVsnnum := strconv.FormatInt(v, 16)
@@ -65,18 +68,16 @@ func TcpOracle(result map[string]interface{}, Args map[string]interface{}) bool 
 	var version string
 	if err == nil {
 		version = fmt.Sprintf("%s.%s.%s.%s.%s",
-			strconv.FormatUint(maj,10),
-			strconv.FormatUint(min,10),
-			strconv.FormatUint(a,10),
-			strconv.FormatUint(b,10),
-			strconv.FormatUint(c,10),
+			strconv.FormatUint(maj, 10),
+			strconv.FormatUint(min, 10),
+			strconv.FormatUint(a, 10),
+			strconv.FormatUint(b, 10),
+			strconv.FormatUint(c, 10),
 		)
-	} else {
-		result["identify.bool"] = false
 	}
-	result["identify.bool"] = true
-	result["identify.string"] = fmt.Sprintf("[%s]", logger.LightYellow(fmt.Sprintf("Version:%s", version)))
-	result["banner.string"] = banStr
-	result["banner.byte"] = reply
+	result.IdentifyBool = true
+	result.IdentifyStr = fmt.Sprintf("[%s]", logger.LightYellow(fmt.Sprintf("Version:%s", version)))
+	result.Banner = banStr
+	result.BannerB = reply
 	return true
 }

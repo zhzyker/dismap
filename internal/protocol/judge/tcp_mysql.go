@@ -1,19 +1,21 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpMysql(result map[string]interface{}) bool {
+func TcpMysql(result *model.Result) bool {
 	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+	buff = result.BannerB
 	ok, err := regexp.Match(`(mysql_native_password|MySQL server|MariaDB server|mysqladmin flush-hosts)`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "mysql"
+		result.Protocol = "mysql"
 		return true
 	}
 	return false

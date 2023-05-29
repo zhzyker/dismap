@@ -2,27 +2,28 @@ package logger
 
 import (
 	"fmt"
-	flag "github.com/zhzyker/dismap/internal/flag"
 	"os"
 	"regexp"
 	"runtime"
 	"time"
 
+	"github.com/zhzyker/dismap/internal/flag"
+
 	"github.com/gookit/color"
 )
 
 var (
-	Red		   = color.Red.Render
-	Cyan       = color.Cyan.Render
-	Yellow     = color.Yellow.Render
-	White      = color.White.Render
-	Blue       = color.Blue.Render
-	Purple     = color.Style{color.Magenta, color.OpBold}.Render
-	LightRed   = color.Style{color.Red, color.OpBold}.Render
-	LightGreen = color.Style{color.Green, color.OpBold}.Render
-	LightWhite = color.Style{color.White, color.OpBold}.Render
-	LightCyan  = color.Style{color.Cyan, color.OpBold}.Render
-	LightYellow  = color.Style{color.Yellow, color.OpBold}.Render
+	Red         = color.Red.Render
+	Cyan        = color.Cyan.Render
+	Yellow      = color.Yellow.Render
+	White       = color.White.Render
+	Blue        = color.Blue.Render
+	Purple      = color.Style{color.Magenta, color.OpBold}.Render
+	LightRed    = color.Style{color.Red, color.OpBold}.Render
+	LightGreen  = color.Style{color.Green, color.OpBold}.Render
+	LightWhite  = color.Style{color.White, color.OpBold}.Render
+	LightCyan   = color.Style{color.Cyan, color.OpBold}.Render
+	LightYellow = color.Style{color.Yellow, color.OpBold}.Render
 	//LightBlue  = color.Style{color.Blue, color.OpBold}.Render
 )
 
@@ -106,9 +107,9 @@ func DebugError(err error) bool {
 		pc, _, line, _ := runtime.Caller(1)
 		Debug(fmt.Sprintf("%s%s%s",
 			White(runtime.FuncForPC(pc).Name()),
-			LightWhite(fmt.Sprintf(" line:%d ",line)),
+			LightWhite(fmt.Sprintf(" line:%d ", line)),
 			White(err)))
- 		return true
+		return true
 	}
 	return false
 }

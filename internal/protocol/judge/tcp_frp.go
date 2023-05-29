@@ -4,15 +4,18 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"strings"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"strings"
 )
 
-func TcpFrp(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
+func TcpFrp(result *model.Result) bool {
+	timeout := flag.Timeout
+	host := result.Host
+	port := result.Port
 
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
@@ -37,9 +40,9 @@ func TcpFrp(result map[string]interface{}, Args map[string]interface{}) bool {
 	} else if hex.EncodeToString(reply[0:12]) != "000100020000000100000000" {
 		return false
 	}
-	result["protocol"] = "frp"
-	result["banner.string"] = frpByteToStringParse(reply[0:12])
-	result["banner.byte"] = reply
+	result.Protocol = "frp"
+	result.Banner = frpByteToStringParse(reply[0:12])
+	result.BannerB = reply
 	return true
 }
 
@@ -48,7 +51,7 @@ func frpByteToStringParse(p []byte) string {
 	var res string
 	for i := 0; i < len(p); i++ {
 		asciiTo16 := fmt.Sprintf("\\x%s", hex.EncodeToString(p[i:i+1]))
-		w = append(w,asciiTo16)
+		w = append(w, asciiTo16)
 	}
 	res = strings.Join(w, "")
 	return res

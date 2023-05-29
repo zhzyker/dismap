@@ -1,19 +1,20 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TlsRedisSsl(result map[string]interface{}) bool {
-	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+func TlsRedisSsl(result *model.Result) bool {
+	var buff = result.BannerB
 	ok, err := regexp.Match(`(^-ERR(.*)command|^-(.*).Redis)`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "redis-ssl"
+		result.Protocol = "redis-ssl"
 		return true
 	}
 	return false

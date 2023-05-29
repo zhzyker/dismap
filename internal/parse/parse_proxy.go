@@ -2,9 +2,10 @@ package parse
 
 import (
 	"fmt"
+	"net/url"
+
 	"github.com/zhzyker/dismap/internal/flag"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"net/url"
 )
 
 func ProxyParse() (string, string, string, error) {

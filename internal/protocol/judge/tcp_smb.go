@@ -5,24 +5,23 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"github.com/zhzyker/dismap/internal/proxy"
-	"github.com/zhzyker/dismap/pkg/logger"
 	"io"
 	"net"
 	"strings"
 	"time"
 
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/internal/proxy"
+
 	crand "crypto/rand"
 )
 
-func TcpSMB(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
-	if smbPublic(result, host, port, timeout) {
+func TcpSMB(result *model.Result) bool {
+	if smbPublic(result, result.Host, result.Port, flag.Timeout) {
 		return true
 	}
-	res, data, err := smb2(host, port, timeout)
+	res, data, err := smb2(result.Host, result.Port, flag.Timeout)
 	if err != nil || res["ntlmssp.Version"] == "" {
 		return false
 	} else {
@@ -31,24 +30,24 @@ func TcpSMB(result map[string]interface{}, Args map[string]interface{}) bool {
 			res["ntlmssp.DNSComputer"],
 			res["ntlmssp.TargetName"],
 			res["ntlmssp.NetbiosComputer"],
-			)
-		result["banner.string"] = banner
-		result["protocol"] = "smb"
-		result["banner.byte"] = data
+		)
+		result.Banner = banner
+		result.Protocol = "smb"
+		result.BannerB = data
 		return true
 	}
 }
 
-func smbPublic(result map[string]interface{}, host string, port int, timeout int) bool {
+func smbPublic(result *model.Result, host string, port int, timeout int) bool {
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return false
 	}
 
 	msg1 := "\x00\x00\x00\x85\xff\x53\x4d\x42\x72\x00\x00\x00\x00\x18\x53\xc0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xfe\x00\x00\x40\x00\x00\x62\x00\x02\x50\x43\x20\x4e\x45\x54\x57\x4f\x52\x4b\x20\x50\x52\x4f\x47\x52\x41\x4d\x20\x31\x2e\x30\x00\x02\x4c\x41\x4e\x4d\x41\x4e\x31\x2e\x30\x00\x02\x57\x69\x6e\x64\x6f\x77\x73\x20\x66\x6f\x72\x20\x57\x6f\x72\x6b\x67\x72\x6f\x75\x70\x73\x20\x33\x2e\x31\x61\x00\x02\x4c\x4d\x31\x2e\x32\x58\x30\x30\x32\x00\x02\x4c\x41\x4e\x4d\x41\x4e\x32\x2e\x31\x00\x02\x4e\x54\x20\x4c\x4d\x20\x30\x2e\x31\x32\x00"
 	msg2 := "\x00\x00\x00\x88\xff\x53\x4d\x42\x73\x00\x00\x00\x00\x18\x07\xc0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xff\xfe\x00\x00\x40\x00\x0d\xff\x00\x88\x00\x04\x11\x0a\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\xd4\x00\x00\x00\x4b\x00\x00\x00\x00\x00\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x30\x00\x20\x00\x32\x00\x31\x00\x39\x00\x35\x00\x00\x00\x57\x00\x69\x00\x6e\x00\x64\x00\x6f\x00\x77\x00\x73\x00\x20\x00\x32\x00\x30\x00\x30\x00\x30\x00\x20\x00\x35\x00\x2e\x00\x30\x00\x00\x00"
 	_, err = conn.Write([]byte(msg1))
-	if logger.DebugError(err) {
+	if err != nil {
 		return false
 	}
 	reply1 := make([]byte, 256)
@@ -58,18 +57,18 @@ func smbPublic(result map[string]interface{}, host string, port int, timeout int
 		return false
 	}
 	_, err = conn.Write([]byte(msg2))
-	if logger.DebugError(err) {
+	if err != nil {
 		return false
 	}
 	reply2 := make([]byte, 512)
 	_, _ = conn.Read(reply2)
 	if conn != nil {
-			_ = conn.Close()
-		}
+		_ = conn.Close()
+	}
 
 	var buffer bytes.Buffer
 	for i := 0; i < len(reply2[46:]); {
-		b := reply2[46:][i:i+2]
+		b := reply2[46:][i : i+2]
 		i += 2
 		if 46+i == len(reply2[46:]) {
 			break
@@ -79,19 +78,19 @@ func smbPublic(result map[string]interface{}, host string, port int, timeout int
 				break
 			}
 			buffer.Write([]byte("\x7C\x7C"))
-			result["banner.string"] = strings.Join([]string{string(buffer.Bytes())}, ",")
+			result.Banner = strings.Join([]string{buffer.String()}, ",")
 			continue
 		}
 		buffer.Write(b[0:1])
-		result["banner.string"] = strings.Join([]string{string(buffer.Bytes())}, ",")
+		result.Banner = strings.Join([]string{buffer.String()}, ",")
 	}
 
 	var ban [512]byte
 	if bytes.Equal(reply2[:], ban[:]) {
 		return false
 	} else {
-		result["protocol"] = "smb"
-		result["banner.byte"] = reply2
+		result.Protocol = "smb"
+		result.BannerB = reply2
 		return true
 	}
 }
@@ -131,25 +130,25 @@ func smb2(host string, port int, timeout int) (map[string]string, []byte, error)
 
 	info := make(map[string]string)
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return info, []byte{}, err
 	}
 	err = SMBSendData(conn, smb1NegotiateProtocolRequest, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return info, []byte{}, err
 	}
 
-	data, err := SMBReadFrame(conn, timeout)
-	if logger.DebugError(err) {
+	_, err = SMBReadFrame(conn, timeout)
+	if err != nil {
 		return info, []byte{}, err
 	}
 
 	err = SMBSendData(conn, SMB2NegotiateProtocolRequest(host), timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return info, []byte{}, err
 	}
 
-	data, _ = SMBReadFrame(conn, timeout)
+	data, _ := SMBReadFrame(conn, timeout)
 	SMB2ExtractFieldsFromNegotiateReply(data, info)
 
 	// SMB2SessionSetupNTLMSSP is a SMB2 SessionSetup NTLMSSP request
@@ -184,7 +183,7 @@ func smb2(host string, port int, timeout int) (map[string]string, []byte, error)
 	binary.LittleEndian.PutUint16(setup[4+32:], 0xfeff)
 
 	err = SMBSendData(conn, setup, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return info, []byte{}, err
 	}
 
@@ -198,14 +197,14 @@ func smb2(host string, port int, timeout int) (map[string]string, []byte, error)
 // RandomBytes generates a random byte sequence of the requested length
 func RandomBytes(numBytes int) []byte {
 	randBytes := make([]byte, numBytes)
-	err := binary.Read(crand.Reader, binary.BigEndian, &randBytes)
-	logger.DebugError(err)
+	// err := binary.Read(crand.Reader, binary.BigEndian, &randBytes)
+	binary.Read(crand.Reader, binary.BigEndian, &randBytes)
 	return randBytes
 }
 
 // SMBReadFrame reads the netBios header then the full response
 func SMBReadFrame(conn net.Conn, t int) ([]byte, error) {
-	timeout := time.Now().Add(time.Duration(t)*time.Second)
+	timeout := time.Now().Add(time.Duration(t) * time.Second)
 	res := []byte{}
 	nbh := make([]byte, 4)
 
@@ -417,7 +416,7 @@ func SMB2ParseNegotiateContext(t int, data []byte, info map[string]string) {
 
 // SMBSendData writes a SMB request to a socket
 func SMBSendData(conn net.Conn, data []byte, timeout int) error {
-	err := conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout)*time.Second))
+	err := conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout) * time.Second))
 	if err != nil {
 		return err
 	}

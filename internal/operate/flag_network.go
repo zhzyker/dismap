@@ -1,21 +1,23 @@
 package operate
 
 import (
-	"github.com/zhzyker/dismap/internal/output"
-	"github.com/zhzyker/dismap/internal/parse"
-	"github.com/zhzyker/dismap/internal/protocol"
-	"github.com/zhzyker/dismap/pkg/logger"
 	"os"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/output"
+	"github.com/zhzyker/dismap/internal/parse"
+	"github.com/zhzyker/dismap/internal/protocol"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func FlagNetwork(op *os.File, wg *sync.WaitGroup, lock *sync.Mutex, address string, Args map[string]interface{}) {
-	timeout := Args["FlagTimeout"].(int)
-	thread := Args["FlagThread"].(int)
-	np := Args["FlagNoIcmp"].(bool)
-	flagPort := Args["FlagPort"].(string)
+func FlagNetwork(op *os.File, wg *sync.WaitGroup, lock *sync.Mutex, address string) {
+	timeout := flag.Timeout
+	thread := flag.Thread
+	np := flag.NoIcmp
+	flagPort := flag.Port
 	ports := parse.PortParse(flagPort)
 
 	logger.Info("Start to detect host from " + address)
@@ -34,44 +36,44 @@ func FlagNetwork(op *os.File, wg *sync.WaitGroup, lock *sync.Mutex, address stri
 		for _, port := range ports {
 			wg.Add(3)
 			intSyncThread++
-			go func(host string, port int, Args map[string]interface{}) {
-				resTls := protocol.DiscoverTls(host, port, Args)
-				if resTls["status"].(string) == "open" {
+			go func(host string, port int) {
+				resTls := protocol.DiscoverTls(host, port)
+				if resTls.Status == "open" {
 					intAll++
 					parse.VerboseParse(resTls)
 					output.Write(resTls, op)
-					if strings.Contains(resTls["uri"].(string), "://") {
+					if strings.Contains(resTls.Uri, "://") {
 						intIde++
 					}
 				}
 				wg.Done()
-			}(host, port, Args)
+			}(host, port)
 
-			go func(host string, port int, Args map[string]interface{}) {
-				resTcp := protocol.DiscoverTcp(host, port, Args)
-				if resTcp["status"].(string) == "open" {
+			go func(host string, port int) {
+				resTcp := protocol.DiscoverTcp(host, port)
+				if resTcp.Status == "open" {
 					intAll++
 					parse.VerboseParse(resTcp)
 					output.Write(resTcp, op)
-					if strings.Contains(resTcp["uri"].(string), "://") {
+					if strings.Contains(resTcp.Uri, "://") {
 						intIde++
 					}
 				}
 				wg.Done()
-			}(host, port, Args)
+			}(host, port)
 
-			go func(host string, port int, Args map[string]interface{}) {
-				resUdp := protocol.DiscoverUdp(host, port, Args)
-				if resUdp["status"].(string) == "open" {
+			go func(host string, port int) {
+				resUdp := protocol.DiscoverUdp(host, port)
+				if resUdp.Status == "open" {
 					intAll++
 					parse.VerboseParse(resUdp)
 					output.Write(resUdp, op)
-					if strings.Contains(resUdp["uri"].(string), "://") {
+					if strings.Contains(resUdp.Uri, "://") {
 						intIde++
 					}
 				}
 				wg.Done()
-			}(host, port, Args)
+			}(host, port)
 			if intSyncThread >= thread {
 				intSyncThread = 0
 				wg.Wait()

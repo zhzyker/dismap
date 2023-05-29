@@ -4,37 +4,41 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/zhzyker/dismap/internal/flag"
-	"github.com/zhzyker/dismap/pkg/logger"
 	"os"
 	"time"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func Open(Args map[string]interface{}) *os.File {
-	if len(Args["FlagOutJson"].(string)) != 0 {
-		return openFile(Args["FlagOutJson"].(string))
+func Open() *os.File {
+	print("openfile: ", flag.File)
+	if len(flag.OutJson) != 0 {
+		print(len(flag.OutJson), flag.OutJson)
+		return openFile(flag.OutJson)
 	} else {
-		return openFile(Args["FlagOutput"].(string))
+		return openFile(flag.Output)
 	}
 }
 
-func Write(result map[string]interface{}, output *os.File) {
-	if result["status"].(string) == "close" {
+func Write(result *model.Result, output *os.File) {
+	if result.Status == "close" {
 		return
 	}
 	if len(flag.OutJson) != 0 {
-		result["banner.byte"] = hex.EncodeToString(result["banner.byte"].([]byte))
-		result["date"] = time.Now().Unix()
+		result.Banner = hex.EncodeToString(result.BannerB)
+		result.Date = time.Now()
 		byteR, _ := json.Marshal(result)
 		writeContent(output, string(byteR))
 	} else {
 		content := fmt.Sprintf("%s, %s, %s, %s, %s, %s",
 			logger.GetTime(),
-			result["type"],
-			result["protocol"],
-			logger.Clean(result["identify.string"].(string)),
-			result["uri"],
-			result["banner.string"])
+			result.Type,
+			result.Protocol,
+			logger.Clean(result.IdentifyStr),
+			result.Uri,
+			result.Banner)
 		writeContent(output, content)
 	}
 }
