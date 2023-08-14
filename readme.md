@@ -25,7 +25,7 @@ C:\Users\zhzyker\Desktop> dismap-0.3-windows-amd64.exe -h
 >  ![dismap](https://github.com/zhzyker/zhzyker/blob/main/dismap-images/dismap-0.3.png)
 
 
-## 🎡 Optons
+## 🎡 Options
 ```Python
   -f, --file string     Parse the target from the specified file for batch recognition
   -h, --help            Show help
