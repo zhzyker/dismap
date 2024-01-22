@@ -13,7 +13,7 @@ func Banner() {
 		"/ /_/ / _  / _(__  )_  / / / / / /_/ /__  /_/ /\n" +
 		"\\__,_/  /_/  /____/ /_/ /_/ /_/\\__,_/ _  .___/\n" +
 		"                                        /_/"
-	s := "  dismap version: 0.4 release\n" +
+	s := "  dismap version: 0.6.1 release\n" +
 		"  author: zhzyker && Nemophllist\n" +
 		"  from: https://github.com/zhzyker/dismap\n"
 	fmt.Println(logger.Purple(b))
