@@ -1,0 +1,16 @@
+[{
+  "rule_id": "1",
+  "type": "OA",
+  "name": "红帆-ioffice",
+  "level": "1",
+  "protocol": "http",
+  "rules": [
+    [{
+      "match": "body",
+      "content": "location.replace\\(\"/iOffice\"\\)"
+    },{
+      "match": "header",
+      "content": "ASP.NET"
+    }]
+  ]
+}]

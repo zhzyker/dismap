@@ -11,10 +11,6 @@ _  __  /__  /__  ___/_  __ `__ \  __ `/__  __ \
   from: https://github.com/zhzyker/dismap
 */
 
-import (
-	"github.com/zhzyker/dismap/internal"
-)
-
 func main() {
-	internal.DisMap()
+
 }
