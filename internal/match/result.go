@@ -12,10 +12,10 @@ type addMatch struct {
 }
 
 // identifyResult 用于生成 JSON 格式的指纹识别结果
-func identifyResult(matches []addMatch, res http.HttpResult, url string) []byte {
+func identifyResult(matches []addMatch, res http.Responses) []byte {
 	// 将结果转化为 JSON 格式
 	jsonResult, err := json.Marshal(map[string]interface{}{
-		"url":     url,
+		"url":     res.Url,
 		"matches": matches,
 		"title":   res.Title,
 	})

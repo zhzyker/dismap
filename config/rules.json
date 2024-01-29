@@ -13,4 +13,31 @@
       "content": "ASP.NET"
     }]
   ]
+},{
+  "rule_id": "2",
+  "type": "Proxy",
+  "name": "BurpSuite",
+  "level": "1",
+  "protocol": "http",
+  "rules": [
+    [{
+      "match": "body",
+      "content": "Welcome to Burp Suite"
+    },{
+      "match": "body",
+      "content": "CA Certificate"
+    }]
+  ]
+},{
+  "rule_id": "3",
+  "type": "Web",
+  "name": "Baidu",
+  "level": "1",
+  "protocol": "http",
+  "rules": [
+    [{
+      "match": "favicon",
+      "content": "717b138033a41361b32b60fc5062ab2a"
+    }]
+  ]
 }]

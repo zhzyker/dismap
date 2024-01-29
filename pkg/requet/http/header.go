@@ -6,17 +6,12 @@ import (
 	"strings"
 )
 
-// getHeaders 函数用于从 http.Response 中读取响应头信息并返回字符串形式的响应头内容
-func getHeaders(response *http.Response) string {
-	// 首先判断响应是否为空或者响应头是否为空，如果是则返回空字符串
-	if response == nil || response.Header == nil {
-		return ""
+// getHeader 函数用于从 http.Response 中读取响应头信息并返回字符串形式的响应头内容
+func getHeader(req *http.Response) []byte {
+	var headers []byte
+	// 遍历响应头，将每个头字段名和对应值按照格式 (key: value) 拼接成字符串并加入到 header 中
+	for name, values := range req.Header {
+		headers = append(headers, []byte(fmt.Sprintf("%s: %s\n", name, strings.Join(values, ", ")))...)
 	}
-	var builder strings.Builder
-	// 遍历响应头，将每个头字段名和对应值拼接成字符串并加入到 builder 中
-	for name, values := range response.Header {
-		builder.WriteString(fmt.Sprintf("%s: %s\n", name, strings.Join(values, ", ")))
-	}
-	//logger.DBG("Target url title: \n" + builder.String())
-	return builder.String()
+	return headers
 }

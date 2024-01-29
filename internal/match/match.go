@@ -1,6 +1,7 @@
 package match
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/zhzyker/dismap/pkg/logger"
 	"github.com/zhzyker/dismap/pkg/requet/http"
@@ -8,32 +9,28 @@ import (
 )
 
 // switchMatch 用于判断响应是否匹配规则
-func switchMatch(match string, content string, res http.HttpResult) bool {
+func switchMatch(match string, content string, res http.Responses) bool {
 	switch match {
 	case "body":
-		return regexp.MustCompile(content).MatchString(res.Body)
+		return regexp.MustCompile(content).Match(res.Body)
 	case "header":
-		return regexp.MustCompile(content).MatchString(res.Headers)
+		return regexp.MustCompile(content).Match(res.Header)
 	case "favicon":
-		//return regexp.MustCompile(content).MatchString(res.Favicon)
+		return bytes.Equal([]byte(content), res.Favicon)
 	}
 	return false
 }
 
 // IdentifyResource 通过加载指纹库来识别 URL 对应的指纹结果
-func IdentifyResource(url string) ([]byte, error) {
-	logger.INF("Load rules to start identifying target: " + url)
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	var matches []addMatch // 用于存储所有匹配的指纹
+func IdentifyResource(response http.Responses) ([]byte, error) {
+	// 用于存储所有匹配的指纹
+	var matches []addMatch
 	// 从文件中读取规则并迭代匹配
 	for _, r := range ReadRules() {
 		for _, content := range r.Rules {
 			matched := true
 			for _, c := range content {
-				matched = matched && switchMatch(c.Match, c.Content, res)
+				matched = matched && switchMatch(c.Match, c.Content, response)
 			}
 			// 如果指纹匹配成功，则将其添加到匹配结果中
 			if matched {
@@ -42,5 +39,5 @@ func IdentifyResource(url string) ([]byte, error) {
 			}
 		}
 	}
-	return identifyResult(matches, res, url), nil
+	return identifyResult(matches, response), nil
 }

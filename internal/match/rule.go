@@ -29,7 +29,7 @@ func ReadRules() []Rule {
 		return rulesCache
 	}
 	// 读取 JSON 文件
-	jsonData, err := ioutil.ReadFile("configs/rules.json")
+	jsonData, err := ioutil.ReadFile("config/rules.json")
 	if err != nil {
 		logger.ERR("Failed to read rules.json file: " + err.Error())
 		return nil
