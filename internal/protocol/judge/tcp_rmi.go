@@ -3,15 +3,18 @@ package judge
 import (
 	"bytes"
 	"encoding/hex"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpRMI(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
+func TcpRMI(result *model.Result) bool {
+	timeout := flag.Timeout
+	host := result.Host
+	port := result.Port
 
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
@@ -36,8 +39,8 @@ func TcpRMI(result map[string]interface{}, Args map[string]interface{}) bool {
 	} else if hex.EncodeToString(reply[0:1]) != "4e" {
 		return false
 	}
-	result["protocol"] = "rmi"
-	result["banner.string"] = parse.ByteToStringParse1(reply)
-	result["banner.byte"] = reply
+	result.Protocol = "rmi"
+	result.Banner = parse.ByteToStringParse1(reply)
+	result.BannerB = reply
 	return true
 }

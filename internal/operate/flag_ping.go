@@ -1,10 +1,11 @@
 package operate
 
 import (
-	"github.com/zhzyker/dismap/internal/parse"
-	"github.com/zhzyker/dismap/pkg/logger"
 	"strconv"
 	"sync"
+
+	"github.com/zhzyker/dismap/internal/parse"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
 func FlagPing(wg *sync.WaitGroup, lock *sync.Mutex, hosts []string, TimeOut int, Thread int, np bool) []string {

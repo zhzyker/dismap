@@ -1,19 +1,20 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpFTP(result map[string]interface{}) bool {
-	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+func TcpFTP(result *model.Result) bool {
+	var buff = result.BannerB
 	ok, err := regexp.Match(`(^220(.*FTP|.*FileZilla)|^421(.*)connections)`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "ftp"
+		result.Protocol = "ftp"
 		return true
 	}
 	return false

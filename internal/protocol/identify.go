@@ -3,19 +3,21 @@ package protocol
 import (
 	"bytes"
 	"fmt"
+
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/protocol/judge"
 	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func JudgeTcp(result map[string]interface{}, Args map[string]interface{}) bool {
-	protocol := result["protocol"].(string)
+func JudgeTcp(result *model.Result) bool {
+	protocol := result.Protocol
 	runAll := true
 	if protocol != "" {
 		runAll = false
 	}
 	if protocol == "http" || protocol == "https" || runAll {
-		if judge.TcpHTTP(result, Args) {
+		if judge.TcpHTTP(result) {
 			printSuccess("TCP/HTTP", result)
 			return true
 		}
@@ -81,31 +83,31 @@ func JudgeTcp(result map[string]interface{}, Args map[string]interface{}) bool {
 		}
 	}
 	if protocol == "oracle" || runAll {
-		if judge.TcpOracle(result, Args) {
+		if judge.TcpOracle(result) {
 			printSuccess("TCP/Oracle", result)
 			return true
 		}
 	}
 	if protocol == "frp" || runAll {
-		if judge.TcpFrp(result, Args) {
+		if judge.TcpFrp(result) {
 			printSuccess("TCP/Frp", result)
 			return true
 		}
 	}
 	if protocol == "socks" || runAll {
-		if judge.TcpSocks(result, Args) {
+		if judge.TcpSocks(result) {
 			printSuccess("TCP/Socks", result)
 			return true
 		}
 	}
 	if protocol == "ldap" || runAll {
-		if judge.TcpLDAP(result, Args) {
+		if judge.TcpLDAP(result) {
 			printSuccess("TCP/LDAP", result)
 			return true
 		}
 	}
 	if protocol == "rmi" || runAll {
-		if judge.TcpRMI(result, Args) {
+		if judge.TcpRMI(result) {
 			printSuccess("TCP/RMI", result)
 			return true
 		}
@@ -117,64 +119,64 @@ func JudgeTcp(result map[string]interface{}, Args map[string]interface{}) bool {
 		}
 	}
 	if protocol == "rtsp" || runAll {
-		if judge.TcpRTSP(result, Args) {
+		if judge.TcpRTSP(result) {
 			printSuccess("TCP/RTSP", result)
 			return true
 		}
 	}
 	if protocol == "rdp" || runAll {
-		if judge.TcpRDP(result, Args) {
+		if judge.TcpRDP(result) {
 			printSuccess("TCP/RDP", result)
 			return true
 		}
 	}
 
 	if protocol == "dcerpc" || runAll {
-		if judge.TcpDceRpc(result, Args) {
+		if judge.TcpDceRpc(result) {
 			printSuccess("TCP/DceRpc", result)
 			return true
 		}
 	}
 	if protocol == "mssql" || runAll {
-		if judge.TcpMssql(result, Args) {
+		if judge.TcpMssql(result) {
 			printSuccess("TCP/Mssql", result)
 			return true
 		}
 	}
 	if protocol == "smb" || runAll {
-		if judge.TcpSMB(result, Args) {
+		if judge.TcpSMB(result) {
 			printSuccess("TCP/SMB", result)
 			return true
 		}
 	}
 	if protocol == "giop" || runAll {
-		if judge.TcpGIOP(result, Args) {
+		if judge.TcpGIOP(result) {
 			printSuccess("TCP/GIOP", result)
 			return true
 		}
 	}
 
-	status := result["status"].(string)
+	status := result.Status
 	if status == "open" && runAll {
 		printFailed("TCP/unknown", result)
 	}
 	return false
 }
 
-func JudgeTls(result map[string]interface{}, Args map[string]interface{}) bool {
-	protocol := result["protocol"].(string)
+func JudgeTls(result *model.Result) bool {
+	protocol := result.Protocol
 	runAll := true
 	if protocol != "" {
 		runAll = false
 	}
 	if protocol == "http" || protocol == "https" || runAll {
-		if judge.TlsHTTPS(result, Args) {
+		if judge.TlsHTTPS(result) {
 			printSuccess("TLS/HTTPS", result)
 			return true
 		}
 	}
 	if protocol == "rdp" || runAll {
-		if judge.TlsRDP(result, Args) {
+		if judge.TlsRDP(result) {
 			printSuccess("TLS/RDP", result)
 			return true
 		}
@@ -186,30 +188,30 @@ func JudgeTls(result map[string]interface{}, Args map[string]interface{}) bool {
 		}
 	}
 
-	status := result["status"].(string)
+	status := result.Status
 	if status == "open" && runAll {
 		printFailed("TLS/unknown", result)
 	}
 	return false
 }
 
-func JudgeUdp(result map[string]interface{}, Args map[string]interface{}) bool {
-	protocol := result["protocol"].(string)
+func JudgeUdp(result *model.Result) bool {
+	protocol := result.Protocol
 	runAll := true
 	if protocol != "" {
 		runAll = false
 	}
 	if protocol == "nbns" || runAll {
-		if judge.UdpNbns(result, Args) {
+		if judge.UdpNbns(result) {
 			printSuccess("UDP/NBNS", result)
 			return true
 		}
 	}
 
 	var buffer [256]byte
-	status := result["status"].(string)
-	if bytes.Equal(result["banner.byte"].([]byte), buffer[:]) {
-		result["status"] = "close"
+	status := result.Status
+	if bytes.Equal(result.BannerB, buffer[:]) {
+		result.Status = "close"
 		return false
 	} else if status == "open" && runAll {
 		printFailed("UDP/unknown", result)
@@ -218,49 +220,39 @@ func JudgeUdp(result map[string]interface{}, Args map[string]interface{}) bool {
 	return false
 }
 
-func printSuccess(protocol string, result map[string]interface{}) {
-	success, b := result["identify.bool"].(bool)
-	if b == false {
-		logger.Success(fmt.Sprintf("[%s] %s [%s]",
-			logger.Cyan(protocol),
-			parse.SchemeParse(result),
-			logger.Blue(result["banner.string"].(string))),
-		)
-		result["identify.string"] = logger.Clean(result["identify.string"].(string))
-		result["note"] = logger.Clean(result["note"].(string))
-		return
-	}
+func printSuccess(protocol string, result *model.Result) {
+	success := result.IdentifyBool
 
 	if success {
 		logger.Success(fmt.Sprintf("[%s] %s %s [%s]",
 			logger.Cyan(protocol),
-			result["identify.string"].(string),
+			result.IdentifyStr,
 			parse.SchemeParse(result),
-			logger.Blue(result["banner.string"].(string))),
+			logger.Blue(result.Banner)),
 		)
-		result["identify.string"] = logger.Clean(result["identify.string"].(string))
-		result["note"] = logger.Clean(result["note"].(string))
+		result.IdentifyStr = logger.Clean(result.IdentifyStr)
+		result.Note = logger.Clean(result.Note)
 		return
 	} else {
 		logger.Success(fmt.Sprintf("[%s] %s [%s]",
 			logger.Cyan(protocol),
 			parse.SchemeParse(result),
-			logger.Blue(result["banner.string"].(string))),
+			logger.Blue(result.Banner)),
 		)
-		result["identify.string"] = logger.Clean(result["identify.string"].(string))
-		result["note"] = logger.Clean(result["note"].(string))
+		result.IdentifyStr = logger.Clean(result.IdentifyStr)
+		result.Note = logger.Clean(result.Note)
 		return
 	}
 }
 
-func printFailed(p string, result map[string]interface{}) {
-	if result["status"].(string) == "open" {
+func printFailed(p string, result *model.Result) {
+	if result.Status == "open" {
 		logger.Failed(fmt.Sprintf("[%s] %s [%s]",
 			logger.Cyan(p),
 			parse.SchemeParse(result),
-			logger.Blue(result["banner.string"].(string))),
+			logger.Blue(result.Banner)),
 		)
-		result["identify.string"] = logger.Clean(result["identify.string"].(string))
-		result["note"] = logger.Clean(result["note"].(string))
+		result.IdentifyStr = logger.Clean(result.IdentifyStr)
+		result.Note = logger.Clean(result.Note)
 	}
 }

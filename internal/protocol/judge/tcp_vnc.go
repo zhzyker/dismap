@@ -1,19 +1,21 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpVNC(result map[string]interface{}) bool {
+func TcpVNC(result *model.Result) bool {
 	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+	buff = result.BannerB
 	ok, err := regexp.Match(`^RFB \d`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "vnc"
+		result.Protocol = "vnc"
 		return true
 	}
 	return false

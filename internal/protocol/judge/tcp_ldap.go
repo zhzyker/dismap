@@ -3,16 +3,19 @@ package judge
 import (
 	"bytes"
 	"encoding/hex"
+	"strings"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"strings"
 )
 
-func TcpLDAP(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
-	host := result["host"].(string)
-	port := result["port"].(int)
+func TcpLDAP(result *model.Result) bool {
+	timeout := flag.Timeout
+	host := result.Host
+	port := result.Port
 
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
@@ -38,8 +41,8 @@ func TcpLDAP(result map[string]interface{}, Args map[string]interface{}) bool {
 	if strings.Contains(hex.EncodeToString(reply), "010004000400") == false {
 		return false
 	}
-	result["protocol"] = "ldap"
-	result["banner.string"] = parse.ByteToStringParse2(reply[0:16])
-	result["banner.byte"] = reply
+	result.Protocol = "ldap"
+	result.Banner = parse.ByteToStringParse2(reply[0:16])
+	result.BannerB = reply
 	return true
 }

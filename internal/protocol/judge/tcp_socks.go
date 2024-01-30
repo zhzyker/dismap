@@ -4,31 +4,34 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"regexp"
+	"strconv"
+
+	"github.com/zhzyker/dismap/internal/flag"
+	"github.com/zhzyker/dismap/internal/model"
 	"github.com/zhzyker/dismap/internal/parse"
 	"github.com/zhzyker/dismap/internal/proxy"
 	"github.com/zhzyker/dismap/pkg/logger"
-	"regexp"
-	"strconv"
 )
 
-func TcpSocks(result map[string]interface{}, Args map[string]interface{}) bool {
-	timeout := Args["FlagTimeout"].(int)
+func TcpSocks(result *model.Result) bool {
+	timeout := flag.Timeout
 
 	if socks4(result, timeout) {
-		result["protocol"] = "socks4"
+		result.Protocol = "socks4"
 		return true
 	}
 
 	if socks5(result, timeout) {
-		result["protocol"] = "socks5"
+		result.Protocol = "socks5"
 		return true
 	}
 	return false
 }
 
-func socks5(result map[string]interface{}, timeout int) bool {
-	host := result["host"].(string)
-	port := result["port"].(int)
+func socks5(result *model.Result, timeout int) bool {
+	host := result.Host
+	port := result.Port
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
 		return false
@@ -64,16 +67,16 @@ func socks5(result map[string]interface{}, timeout int) bool {
 	if string(reply[1]) == "\x02" {
 		buffer.WriteString(fmt.Sprintf("[%s]", logger.LightYellow("Method:Username/Password(\\x02)")))
 	}
-	result["identify.bool"] = true
-	result["identify.string"] = buffer.String()
-	result["banner.string"] = parse.ByteToStringParse2(reply[0:2])
-	result["banner.byte"] = reply
+	result.IdentifyBool = true
+	result.IdentifyStr = buffer.String()
+	result.Banner = parse.ByteToStringParse2(reply[0:2])
+	result.BannerB = reply
 	return true
 }
 
-func socks4(result map[string]interface{}, timeout int) bool {
-	host := result["host"].(string)
-	port := result["port"].(int)
+func socks4(result *model.Result, timeout int) bool {
+	host := result.Host
+	port := result.Port
 	conn, err := proxy.ConnProxyTcp(host, port, timeout)
 	if logger.DebugError(err) {
 		return false
@@ -81,7 +84,7 @@ func socks4(result map[string]interface{}, timeout int) bool {
 
 	p1 := strconv.FormatInt(int64(port/256), 16)
 	if p1str, _ := strconv.Atoi(p1); p1str < 10 {
-		p1 = fmt.Sprintf("0%s",p1)
+		p1 = fmt.Sprintf("0%s", p1)
 	}
 	p1byte, err := hex.DecodeString(p1)
 	if logger.DebugError(err) {
@@ -89,13 +92,13 @@ func socks4(result map[string]interface{}, timeout int) bool {
 	}
 	p2 := strconv.FormatInt(int64(port%256), 16)
 	if p2str, _ := strconv.Atoi(p2); p2str < 10 {
-		p2 = fmt.Sprintf("0%s",p2)
+		p2 = fmt.Sprintf("0%s", p2)
 	}
 	p2byte, err := hex.DecodeString(p2)
 	if logger.DebugError(err) {
 		return false
 	}
-	msgByte := []byte {0x04, 0x01}
+	msgByte := []byte{0x04, 0x01}
 	msgByte = append(msgByte, p1byte[0])
 	msgByte = append(msgByte, p2byte[0])
 	msgStr := hex.EncodeToString(msgByte)
@@ -111,7 +114,7 @@ func socks4(result map[string]interface{}, timeout int) bool {
 
 		n := strconv.FormatInt(i64, 16)
 		if len(n) != 2 {
-			n = fmt.Sprintf("0%s",n)
+			n = fmt.Sprintf("0%s", n)
 		}
 		msgStr += n
 	}
@@ -129,8 +132,8 @@ func socks4(result map[string]interface{}, timeout int) bool {
 	}
 
 	if string(reply[1]) == "\x5b" {
-		result["banner.string"] = parse.ByteToStringParse2(reply[0:8])
-		result["banner.byte"] = reply
+		result.Banner = parse.ByteToStringParse2(reply[0:8])
+		result.BannerB = reply
 		return true
 	}
 	return false

@@ -16,5 +16,5 @@ import (
 )
 
 func main() {
-	internal.DisMap()
+	internal.Execute()
 }

@@ -1,19 +1,21 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpRedis(result map[string]interface{}) bool {
+func TcpRedis(result *model.Result) bool {
 	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+	buff = result.BannerB
 	ok, err := regexp.Match(`(^-ERR(.*)command|^-DENIED.Redis)`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "redis"
+		result.Protocol = "redis"
 		return true
 	}
 	return false

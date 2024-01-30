@@ -1,19 +1,21 @@
 package judge
 
 import (
-	"github.com/zhzyker/dismap/pkg/logger"
 	"regexp"
+
+	"github.com/zhzyker/dismap/internal/model"
+	"github.com/zhzyker/dismap/pkg/logger"
 )
 
-func TcpIMAP(result map[string]interface{}) bool {
+func TcpIMAP(result *model.Result) bool {
 	var buff []byte
-	buff, _ = result["banner.byte"].([]byte)
+	buff = result.BannerB
 	ok, err := regexp.Match(`^* OK`, buff)
 	if logger.DebugError(err) {
 		return false
 	}
 	if ok {
-		result["protocol"] = "imap"
+		result.Protocol = "imap"
 		return true
 	}
 	return false
